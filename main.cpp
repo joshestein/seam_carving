@@ -13,17 +13,35 @@ CImg<float> remove_vertical_seam(CImg<float> &src, std::vector<int> x_positions)
 
 int main(int argc, char **argv) {
     CImg<float> image("src_img.png");
-    CImg<float> energy(image.width(), image.height());
+    CImg<float> new_img;
 
+    for (int i = 0; i < 10; ++i) {
         CImg<float> energy = calculate_gradient(image);
     forward_energy(energy);
         std::vector<int> seam = find_vertical_seam(energy);
         new_img = remove_vertical_seam(image, seam);
 
-    CImgDisplay main_disp(energy, "Source Image");
-    while (!main_disp.is_closed()) {
-        main_disp.wait();
+        seam.clear();
     }
+    new_img.save("out.png");
+
+    // auto iter = seam.end();
+    // for (int y = 0; y < image.height(), iter != seam.begin(); ++y, --iter) {
+    //     seams(*iter, y) = 255;
+    // }
+
+    // std::vector<int> seam = find_horizontal_seam(energy);
+
+    // auto iter = seam.end();
+    // for (int x = 0; x < image.width(), iter != seam.begin(); ++x, --iter) {
+    //     std::cout << *iter << std::endl;
+    //     seams(x, *iter) = 255;
+    // }
+
+    // CImgDisplay main_disp(image, "Source Image");
+    // while (!main_disp.is_closed()) {
+    //     main_disp.wait();
+    // }
     return 0;
 }
 
