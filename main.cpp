@@ -8,6 +8,7 @@ using namespace cimg_library;
 CImg<float> calculate_gradient(CImg<float> &src);
 void forward_energy(CImg<float> &energy);
 std::vector<int> find_vertical_seam(CImg<float> &energy);
+std::vector<int> find_horizontal_seam(CImg<float> &energy);
 
 int main(int argc, char **argv) {
     CImg<float> image("src_img.png");
@@ -107,3 +108,38 @@ std::vector<int> find_vertical_seam(CImg<float> &energy) {
     return min_element_idx;
 }
 
+std::vector<int> find_horizontal_seam(CImg<float> &energy) {
+    std::vector<int> min_element_idx;
+    int min_idx, min_element;
+
+    // find smallest element in second from bottom col
+    min_element = INT_MAX;
+    for (int y = 1; y < energy.height(); ++y) {
+        if (energy(energy.width() - 1, y) < min_element) {
+            min_element = energy(energy.width() - 1, y);
+            min_idx = y;
+        }
+    }
+    // push back last col (border element)
+    min_element_idx.push_back(min_idx);
+    // push back _actual_ element
+    min_element_idx.push_back(min_idx);
+
+    int next_min_shift;
+    for (int x = energy.width() - 2; x > 0; --x) {
+        min_element = energy(x, min_idx - 1);
+        next_min_shift = -1;
+        if (energy(x, min_idx) < min_element) {
+            min_element = energy(x, min_idx);
+            next_min_shift = 0;
+        }
+        if (energy(x, min_idx + 1) < min_element) {
+            min_element = energy(x, min_idx + 1);
+            next_min_shift = 1;
+        }
+        min_idx += next_min_shift;
+        min_element_idx.push_back(min_idx);
+    }
+    // push back final (top) col
+    min_element_idx.push_back(min_idx);
+    return min_element_idx;
