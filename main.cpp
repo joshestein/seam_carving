@@ -9,6 +9,7 @@ CImg<float> calculate_gradient(CImg<float> &src);
 void forward_energy(CImg<float> &energy);
 std::vector<int> find_vertical_seam(CImg<float> &energy);
 std::vector<int> find_horizontal_seam(CImg<float> &energy);
+CImg<float> remove_vertical_seam(CImg<float> &src, std::vector<int> x_positions);
 
 int main(int argc, char **argv) {
     CImg<float> image("src_img.png");
@@ -143,3 +144,22 @@ std::vector<int> find_horizontal_seam(CImg<float> &energy) {
     // push back final (top) col
     min_element_idx.push_back(min_idx);
     return min_element_idx;
+}
+
+CImg<float> remove_vertical_seam(CImg<float> &src, std::vector<int> x_positions) {
+    CImg<float> new_img(src.width() - 1, src.height());
+    auto iter = x_positions.end();
+    for (int y = 0; y < src.height(), iter != x_positions.begin(); ++y, --iter) {
+        for (int x = *iter; x < src.width() - 1; ++x) {
+            // shift pixels from right hand side filling removed pixel
+            // src(x, y) = src(x + 1, y);
+            src(x, y, 0, 0) = src(x + 1, y, 0, 0);
+            src(x, y, 0, 1) = src(x + 1, y, 0, 1);
+            src(x, y, 0, 2) = src(x + 1, y, 0, 2);
+
+        }
+    }
+    new_img = src.get_crop(0, 0, 0, 0, src.width() - 1, src.height(), 0, 3);
+    return new_img;
+    // src.crop(0, 0, 0, 0, src.width() - 1, src.height(), 0, 3);
+}
