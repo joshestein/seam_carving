@@ -17,7 +17,7 @@ int main(int argc, char **argv) {
 
     for (int i = 0; i < 10; ++i) {
         CImg<float> energy = calculate_gradient(image);
-    forward_energy(energy);
+        forward_energy(energy);
         std::vector<int> seam = find_vertical_seam(energy);
         new_img = remove_vertical_seam(image, seam);
 
@@ -79,7 +79,6 @@ void forward_energy(CImg<float> &energy) {
     // start at 1 due to edges being set to known 1000
     for (int y = 1; y < energy.height(); ++y) { 
         for (int x = 1; x < energy.width(); ++x) { 
-
             // find minimum element energy on top of current element
             int min_element = std::min({energy(x-1, y-1), energy(x, y-1), energy(x, y+1)});
 
