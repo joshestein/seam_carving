@@ -4,14 +4,14 @@
 
 using namespace cimg_library;
 
-void calculate_gradient(CImg<float> &src, CImg<float> &energy);
+CImg<float> calculate_gradient(CImg<float> &src);
 void forward_energy(CImg<float> &energy);
 
 int main(int argc, char **argv) {
     CImg<float> image("src_img.png");
     CImg<float> energy(image.width(), image.height());
 
-    calculate_gradient(image, energy);
+        CImg<float> energy = calculate_gradient(image);
     forward_energy(energy);
 
     CImgDisplay main_disp(energy, "Source Image");
@@ -21,9 +21,10 @@ int main(int argc, char **argv) {
     return 0;
 }
 
-void calculate_gradient(CImg<float> &src, CImg<float> &energy) {
+CImg<float> calculate_gradient(CImg<float> &src) {
     unsigned char red_x, red_y, blue_x, blue_y, green_x, green_y;
     int grad_x, grad_y;
+    CImg<float> energy(src.width(), src.height());
 
     for (int y = 0; y < src.height(); ++y) {
         for (int x = 0; x < src.width(); ++x) {
@@ -47,6 +48,7 @@ void calculate_gradient(CImg<float> &src, CImg<float> &energy) {
             }
         }
     }
+    return energy;
 }
 
 void forward_energy(CImg<float> &energy) {
