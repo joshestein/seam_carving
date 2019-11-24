@@ -53,15 +53,9 @@ void forward_energy(CImg<float> &energy) {
     // start at 1 due to edges being set to known 1000
     for (int y = 1; y < energy.height(); ++y) { 
         for (int x = 1; x < energy.width(); ++x) { 
-            
+
             // find minimum element energy on top of current element
-            int min_element = energy(x-1, y-1);
-            if (energy(x, y-1) < min_element) {
-                min_element = energy(x, y-1);
-            }
-            if (energy(x+1, y-1) < min_element) {
-                min_element = energy(x+1, y-1);
-            }
+            int min_element = std::min({energy(x-1, y-1), energy(x, y-1), energy(x, y+1)});
 
             // forward pass update
             energy(x, y) += min_element;
